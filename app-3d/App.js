@@ -31,7 +31,7 @@ class AppSingleton {
         this.camera = new Camera3d()
         this.cameraControlOrbit = new CameraControlOrbit(this.camera, this.canvas)
         this.cameraControlOrbit.target[0] = -0.75
-		this.cameraControlOrbit.apply()
+        this.cameraControlOrbit.apply()
         
         // subscribe
         this.canvas.subscribe("Resize", this, this.resize)
