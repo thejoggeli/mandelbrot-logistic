@@ -42,7 +42,8 @@ class AppSingleton {
         this.gl = this.canvas.gl
         this.initWebgl()
 
-        // compute
+        // compute        
+        this.voxels_density = 512
         this.compute()
         
         // remove loading 
@@ -90,8 +91,6 @@ class AppSingleton {
         var gl = this.gl
 
         var t_start = Time.getTimeMillis()
-        
-        this.voxels_density = 512
 
         var position_x = -1.0
         var position_z = 0.0
@@ -109,9 +108,6 @@ class AppSingleton {
 
         var step_x = bounding_box_size_x/num_voxels_x
         var step_z = bounding_box_size_z/num_voxels_z
-        
-        this.voxels_density_x = 1.0/step_x
-        this.voxels_density_z = 1.0/step_z
         
         var offset_x = position_x-step_x*(num_voxels_x-1)*0.5 // + step_x/2.0
         var offset_z = position_z-step_z*(num_voxels_z-1)*0.5 // + step_z/2.0
