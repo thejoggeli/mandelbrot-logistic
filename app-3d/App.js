@@ -105,15 +105,17 @@ class AppSingleton {
         var offset_x = position_x-step_x*(num_voxels_x-1)*0.5 // + step_x/2.0
         var offset_z = position_z-step_z*(num_voxels_z-1)*0.5 // + step_z/2.0
 
+        var scale_y = 2.0/3.0
+
         var voxels_positions = []
         var voxels_colors = []
 
         const max_iterations = 1024*4
 
-        var max_z_points = Math.min(max_iterations, 1024)
-        var z_squared_values = new Array(max_iterations)
-        var z_squared_values_end = z_squared_values.length
-        var z_squared_values_end_minus_max = z_squared_values.length - max_z_points
+        var max_z_points = Math.min(max_iterations, 512)
+        var z_re_values = new Array(max_iterations)
+        var z_re_values_end = z_re_values.length
+        var z_re_values_end_minus_max = z_re_values.length - max_z_points
 
         for(var voxel_x = 0; voxel_x < num_voxels_x; voxel_x++){
             for(var voxel_z = 0; voxel_z < num_voxels_z; voxel_z++){
@@ -129,7 +131,7 @@ class AppSingleton {
 
                 var is_in_set = true
 
-                var z_squared_max = 0
+                var z_re_max = 0
 
                 for(var i = 0; i < max_iterations; i++){
                     var a = z_re
@@ -141,36 +143,43 @@ class AppSingleton {
                         is_in_set = false
                         break
                     }
-                    z_squared_values[i] = z_squared
-                    if(z_squared > z_squared_max){
-                        z_squared_max = z_squared
+                    z_re_values[i] = z_re
+                    if(z_squared > z_re_max){
+                        z_re_max = z_squared
                     }
                 }
 
                 if(is_in_set){                
-                    var z_squared_values_start = z_squared_values_end_minus_max
-                    var z_squared_values_last = z_squared_values[z_squared_values_end-1]
-                    for(var j = z_squared_values_end-2; j >= z_squared_values_end_minus_max; j--){
-                        var z_squared_values_curr = z_squared_values[j]
-                        var rel_err = 1-(
-                            z_squared_values_last > z_squared_values_curr ?
-                            z_squared_values_curr / z_squared_values_last :
-                            z_squared_values_last / z_squared_values_curr
-                        )
+                    var z_re_values_start = z_re_values_end_minus_max
+                    var z_re_values_last = z_re_values[z_re_values_end-1]
+                    for(var j = z_re_values_end-2; j >= z_re_values_end_minus_max; j--){
+                        /*
+                        var z_re_values_curr = z_re_values[j]
+                        var rel_err = Math.abs(1-(
+                            z_re_values_last > z_re_values_curr ?
+                            z_re_values_curr / z_re_values_last :
+                            z_re_values_last / z_re_values_curr
+                        ))
                         if(rel_err < 1E-6){
-                            z_squared_values_start = j+1
+                            z_re_values_start = j+1
                             break
-                        }
+                        } 
+                        */
+                        var z_re_values_curr = z_re_values[j]
+                        if(z_re_values_curr == z_re_values_last){
+                            z_re_values_start = j+1
+                            break
+                        } 
                     }
-                    var actual_z_points = z_squared_values_end - z_squared_values_start
+                    var actual_z_points = z_re_values_end - z_re_values_start
 
                     var gray    = actual_z_points / max_z_points              
                     var red     = gray + 0.5
                     var green   = gray
                     var blue    = gray
                     var alpha   = 1.0-(actual_z_points / max_z_points) * (world_z == 0.0 ? 0.8 : 0.99)
-                    for(var j = z_squared_values_start; j < z_squared_values_end; j++){
-                        const world_y = Math.sqrt(z_squared_values[j])
+                    for(var j = z_re_values_start; j < z_re_values_end; j++){
+                        const world_y = -z_re_values[j] * scale_y
                         voxels_positions.push(world_x, world_y, world_z)
                         voxels_colors.push(red, green, blue, alpha)
                     }
