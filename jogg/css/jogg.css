@@ -1,0 +1,34 @@
+.gfw-canvas-container {position:absolute;margin:0;padding:0;}
+.gfw-canvas {margin:0;padding:0;vertical-align:bottom;background:transparent}
+.gfw-canvas:focus {outline:0;}
+.gfw-input-overlay {position:absolute;z-index:10000;top:0;left:0;}
+.gfw-input-overlay:focus {outline:0;margin:0;padding:0}
+
+@font-face {font-family: 'VeraMono'; src: url('../font/VeraMono.ttf'); font-weight: normal; font-style: normal;}
+@font-face {font-family: 'VeraMono'; src: url('../font/VeraMono-Bold.ttf'); font-weight: bold; font-style: normal;}
+@font-face {font-family: 'VeraMono'; src: url('../font/VeraMono-Italic.ttf'); font-weight: normal; font-style: italic;}
+@font-face {font-family: 'VeraMono'; src: url('../font/VeraMono-Bold-Italic.ttf'); font-weight: bold; font-style: italic;}
+
+.jogg-monitor-anchor {
+	position:fixed;left:0;top:0;font-size:12px;font-family:"VeraMono";
+	text-shadow: 1px 1px #ffffff;z-index:1000;padding:4px;text-align:left;
+	cursor:default;pointer-events:none;opacity:0.75;
+}
+.jogg-monitor {text-shadow:none;margin-bottom:10px;}
+.jogg-monitor:hover {background:transparent;border:0;}
+
+.jogg-monitor .monitor-row {}
+.jogg-monitor .monitor-name {color:white;display:inline-block}
+.jogg-monitor .monitor-value {color:white;display:inline-block}
+
+.clearfix {clear:both}
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
