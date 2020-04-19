@@ -44,6 +44,9 @@ class AppSingleton {
 
         // compute
         this.compute()
+        
+        // remove loading 
+        $(".loading").remove()
 
         // fullscreen
         this.canvas.setFullscreen(true)
@@ -71,6 +74,7 @@ class AppSingleton {
         this.shaderProgram.link()
         this.shaderProgram.addAttribute("aVoxelPosition")
         this.shaderProgram.addAttribute("aVoxelColor")
+        this.shaderProgram.addUniform("uPointSize")
         this.shaderProgram.addUniform("uCameraTransform")
         // voxels positions
         this.voxelsPositions = new VertexBuffer(gl, gl.DYNAMIC_DRAW)
@@ -86,14 +90,8 @@ class AppSingleton {
         var gl = this.gl
 
         var t_start = Time.getTimeMillis()
-
-        var num_voxels_x = 512*4
-        var num_voxels_z = 512*2
-
-        if(num_voxels_x%2==0) 
-            num_voxels_x += 1
-        if(num_voxels_z%2==0) 
-            num_voxels_z += 1
+        
+        this.voxels_density = 512
 
         var position_x = -1.0
         var position_z = 0.0
@@ -101,8 +99,19 @@ class AppSingleton {
         var bounding_box_size_x = 4.0
         var bounding_box_size_z = 2.0
 
+        var num_voxels_x = Math.floor(this.voxels_density * bounding_box_size_x)
+        var num_voxels_z = Math.floor(this.voxels_density * bounding_box_size_z)
+
+        if(num_voxels_x%2==0) 
+            num_voxels_x += 1
+        if(num_voxels_z%2==0) 
+            num_voxels_z += 1
+
         var step_x = bounding_box_size_x/num_voxels_x
         var step_z = bounding_box_size_z/num_voxels_z
+        
+        this.voxels_density_x = 1.0/step_x
+        this.voxels_density_z = 1.0/step_z
         
         var offset_x = position_x-step_x*(num_voxels_x-1)*0.5 // + step_x/2.0
         var offset_z = position_z-step_z*(num_voxels_z-1)*0.5 // + step_z/2.0
@@ -179,7 +188,6 @@ class AppSingleton {
                         voxels_colors.push(red, green, blue, alpha)
                     }
                 }
-
             }
         }
 
@@ -228,6 +236,9 @@ class AppSingleton {
         gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT)
         // begin render
         this.shaderProgram.use()
+        // uniform point size
+        var pointSize = Math.max(1.0, this.cameraControlOrbit.zoom / this.voxels_density * context.height / 2.82842712474)
+        gl.uniform1f(this.shaderProgram.uniforms.uPointSize.location, pointSize)
         // uniform camera transform
         this.camera.updateViewProjectionMatrix()
         gl.uniformMatrix4fv(this.shaderProgram.uniforms.uCameraTransform.location, false, this.camera.viewProjectionMatrix);

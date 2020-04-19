@@ -6,12 +6,13 @@ Shaders.vertex = `
 attribute vec3 aVoxelPosition;
 attribute vec4 aVoxelColor;
 uniform mat4 uCameraTransform;
+uniform float uPointSize;
 
 varying vec4 vVoxelColor;
 
 void main() {
    gl_Position = uCameraTransform * vec4(aVoxelPosition.xyz, 1.0); 
-   gl_PointSize = 1.0;
+   gl_PointSize = uPointSize;
    vVoxelColor = aVoxelColor;
 }
 `
