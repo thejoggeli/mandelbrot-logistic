@@ -30,6 +30,8 @@ class AppSingleton {
         // camera
         this.camera = new Camera3d()
         this.cameraControlOrbit = new CameraControlOrbit(this.camera, this.canvas)
+        this.cameraControlOrbit.target[0] = -0.75
+		this.cameraControlOrbit.apply()
         
         // subscribe
         this.canvas.subscribe("Resize", this, this.resize)
@@ -93,7 +95,7 @@ class AppSingleton {
         if(num_voxels_z%2==0) 
             num_voxels_z += 1
 
-        var position_x = 0.0
+        var position_x = -1.0
         var position_z = 0.0
 
         var bounding_box_size_x = 4.0
@@ -126,12 +128,8 @@ class AppSingleton {
                 const c_im = world_z
                 var z_re = 0
                 var z_im = 0
-                var z_re_sqr = 0
-                var z_im_sqr = 0
 
                 var is_in_set = true
-
-                var z_re_max = 0
 
                 for(var i = 0; i < max_iterations; i++){
                     var a = z_re
@@ -144,9 +142,6 @@ class AppSingleton {
                         break
                     }
                     z_re_values[i] = z_re
-                    if(z_squared > z_re_max){
-                        z_re_max = z_squared
-                    }
                 }
 
                 if(is_in_set){                
@@ -235,7 +230,7 @@ class AppSingleton {
         this.shaderProgram.use()
         // uniform camera transform
         this.camera.updateViewProjectionMatrix()
-	    gl.uniformMatrix4fv(this.shaderProgram.uniforms.uCameraTransform.location, false, this.camera.viewProjectionMatrix);
+        gl.uniformMatrix4fv(this.shaderProgram.uniforms.uCameraTransform.location, false, this.camera.viewProjectionMatrix);
         // attribute voxel positions
         gl.bindBuffer(gl.ARRAY_BUFFER, this.voxelsPositions.vbo)
         gl.vertexAttribPointer(this.shaderProgram.attributes.aVoxelPosition.location, this.voxelsPositions.pitch, gl.FLOAT, false, 0, 0)
